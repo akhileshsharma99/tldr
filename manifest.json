@@ -3,7 +3,7 @@
   "name": "tl;dr",
   "description": "Summarize and get key points for articles with a click!",
   "version": "1.0",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "src/index.html",
     "default_icon": "images/logo/logo-no-background.png"

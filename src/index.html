@@ -7,8 +7,14 @@
   <body>
     <div id="container">
       <h1 class="title">TL;DR</h1>
-      <div id="loader" class="show"></div>
+      <div id="api-key-container" class="hide">
+        <label for="api-key-input">OpenAI API Key:</label>
+        <input type="text" id="api-key-input">
+        <button id="api-key-button">Set API Key</button>
+      </div>
+      <div id="loader" class="hide"></div>
       <div id="summary-result" class="hide"></div>
+      <button id="reset-api-key-button" class="hide">Reset API Key</button>
     </div>
     <script src="popup.js"></script>
   </body>

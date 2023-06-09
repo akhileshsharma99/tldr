@@ -7,27 +7,39 @@ let isSummaryReady = false;
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (request.message === 'body') {
-        summary = null;
-        isSummaryReady = false;
-        console.log('Processing...');
-        const bodyContent = request.data;
-        const model = new OpenAI({
-            temperature: 0,
-            openAIApiKey: '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'
+        chrome.storage.local.get(['api_key'], async function (result) {
+            if (!result.api_key) {
+                summary = '';
+                return
+            }
+            summary = null;
+            isSummaryReady = false;
+            console.log('Processing...');
+            const bodyContent = request.data;
+            const model = new OpenAI({
+                temperature: 0,
+                openAIApiKey: result.api_key
+            });
+            const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
+            const docs = await textSplitter.createDocuments([bodyContent]);
+
+            // This convenience function creates a document chain prompted to summarize a set of documents.
+            const chain = loadSummarizationChain(model, { type: "stuff" });
+
+            summary = await chain.call({
+                input_documents: docs,
+            })
+                .then((res) => {
+                    console.log(res.text.trim());
+                    return res.text.trim();
+                })
+                .catch((e) => {
+                    console.log(e);
+                    return '';
+                });
+
+            isSummaryReady = true;
         });
-        const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
-        const docs = await textSplitter.createDocuments([bodyContent]);
-
-        // This convenience function creates a document chain prompted to summarize a set of documents.
-        const chain = loadSummarizationChain(model, { type: "stuff" });
-
-        const res = await chain.call({
-            input_documents: docs,
-        });
-
-        summary = res.text.trim(); // replace this line with the actual summarization process 
-        console.log(summary);
-        isSummaryReady = true;
     }
 
     if (request.message === 'get_summary') {
@@ -38,5 +50,14 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             // If the summary isn't ready yet, let the popup script know
             sendResponse({ status: 'processing' });
         }
+    }
+});
+
+
+// Listen for URL changes
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.url) {
+        // If the URL has changed, ask the content script to send a new 'body' message
+        chrome.tabs.sendMessage(tabId, { message: 'update_body' });
     }
 });
