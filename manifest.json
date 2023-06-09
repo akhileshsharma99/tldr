@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "tl;dr",
+  "description": "Summarize and get key points for articles with a click!",
+  "version": "1.0",
+  "permissions": ["activeTab"],
+  "action": {
+    "default_popup": "src/index.html",
+    "default_icon": "images/logo/logo-no-background.png"
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["src/content.bundle.js"]
+    }
+  ]
+}
