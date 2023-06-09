@@ -9,12 +9,12 @@
     "default_icon": "images/logo/logo-no-background.png"
   },
   "background": {
-    "service_worker": "src/background.js"
+    "service_worker": "dist/background.bundle.js"
   },
   "content_scripts": [
     {
       "matches": ["https://*/*", "http://*/*"],
-      "js": ["src/content.bundle.js"]
+      "js": ["src/content.js"]
     }
   ]
 }

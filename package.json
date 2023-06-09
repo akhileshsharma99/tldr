@@ -20,6 +20,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@mozilla/readability": "^0.4.4"
+    "@mozilla/readability": "^0.4.4",
+    "langchain": "^0.0.92"
   }
 }
